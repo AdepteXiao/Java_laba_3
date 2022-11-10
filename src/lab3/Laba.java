@@ -1,4 +1,4 @@
-package com.lab3;
+package lab3;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -25,15 +25,15 @@ public class Laba {
  */
 interface menuEnum {
 
-  int ADD_PERSON = 1,
-      DELETE_PERSON = 2,
-      PRINT_PERSONS = 3,
-      COMPARE_PERSONS = 4,
+  int ADD_ENGINE = 1,
+      DELETE_ENGINE = 2,
+      PRINT_ENGINE = 3,
+      COMPARE_ENGINE = 4,
       EXIT = 5;
 
-  int ADD_STUDENT = 2,
-      ADD_TEACHER = 3,
-      ADD_EMPLOYEE = 4;
+  int ADD_JET_ENGINE = 2,
+      ADD_DIEZ_ENGINE = 3,
+      ADD_CONS_ENGINE = 4;
 
 }
 
@@ -53,12 +53,12 @@ class UI implements menuEnum {
   private final Inputer inp = new Inputer();
 
   /**
-   * Основной список людей
+   * Основной список двигателей
    */
-  private final ArrayList<Person> persons = new ArrayList<>();
+  private final ArrayList<Engine> engine = new ArrayList<>();
 
   /**
-   * Метод основного меню работы
+   * Метод основного меню
    */
   public void menu() {
 
@@ -66,19 +66,19 @@ class UI implements menuEnum {
 
     do {
       this.out.println("""
-                    1. Добавить человека
-                    2. Удалить человека
-                    3. Вывести всех людей
-                    4. Сравнить двух людей
-                    5. Выход
-                    """);
+          1. Добавить двигатель
+          2. Удалить двигатель
+          3. Вывести все двигатели
+          4. Сравнить два двигателя
+          5. Выход
+          """);
 
       choice = inp.getInt();
       switch (choice) {
-        case ADD_PERSON -> personAdder();
-        case DELETE_PERSON -> deletePerson();
-        case PRINT_PERSONS -> printPersons();
-        case COMPARE_PERSONS -> comparator();
+        case ADD_ENGINE -> engineAdder();
+        case DELETE_ENGINE -> deleteEngines();
+        case PRINT_ENGINE -> printEngines();
+        case COMPARE_ENGINE -> compareEngine();
         default -> {
           if (choice != EXIT) {
             this.out.println("Некорректный ввод");
@@ -94,24 +94,24 @@ class UI implements menuEnum {
   /**
    * Метод меню добавления человека
    */
-  private void personAdder() {
+  private void engineAdder() {
     int choice;
 
     do {
       this.out.println("""
-                    1. Добавить человека
-                    2. Добавить студента
-                    3. Добавить преподавателя
-                    4. Добавить сотрудника
-                    5. Выйти в главное меню
-                    """);
+          1. Добавить двигатель
+          2. Добавить реактивный двигатель
+          3. Добавить дизельный двигатель
+          4. Добавить двигатель внутреннего сгорания
+          5. Выйти в главное меню
+          """);
 
       choice = inp.getInt();
       switch (choice) {
-        case ADD_PERSON -> adderHandler(1);
-        case ADD_STUDENT -> adderHandler(2);
-        case ADD_TEACHER -> adderHandler(3);
-        case ADD_EMPLOYEE -> adderHandler(4);
+        case ADD_ENGINE -> adderHandler(1);
+        case ADD_JET_ENGINE -> adderHandler(2);
+        case ADD_DIEZ_ENGINE -> adderHandler(3);
+        case ADD_CONS_ENGINE -> adderHandler(4);
         default -> {
           if (choice != EXIT) {
             this.out.println("Некорректный ввод");
@@ -123,11 +123,11 @@ class UI implements menuEnum {
   }
 
   /**
-   * Метод добавления человека, выбранного типа
+   * Метод добавления двигателя выбранного типа
    *
-   * @param human_type выбранный тип человека
+   * @param engine_type выбранный тип двигателя
    */
-  private void adderHandler(int human_type) {
+  private void adderHandler(int engine_type) {
     String data_answer;
 
     while (true) {
@@ -140,199 +140,157 @@ class UI implements menuEnum {
         break;
       }
     }
-    Person new_person = new Person();
+    String name = null;
+    int power = -1;
     if (Objects.equals(data_answer, "y")) {
-      boolean isName = false, isYO = false;
-      while (!(isName & isYO)) {
-        if (!isName) {
-          this.out.println("Введите имя человека");
-          isName = new_person.setName(this.inp.getString());
-          if (!isName) {
-            this.out.println("Некорректный ввод");
-          }
-        }
+      this.out.println("Введите название двигателя");
+      name = this.inp.getString();
+      this.out.println("Введите мощность двигателя(1 - 1000000)");
+      power = this.inp.getInt();
 
-        if (!isYO) {
-          this.out.println("Введите возраст человека");
-          isYO = new_person.setYearsOld(this.inp.getInt());
-          if (!isYO) {
-            this.out.println("Некорректный ввод");
-          }
-        }
-      }
     }
 
-    switch (human_type) {
-      case ADD_PERSON -> addPerson(new_person);
-      case ADD_STUDENT -> addStudent(new_person);
-      case ADD_TEACHER -> addEmployee(new_person, true);
-      case ADD_EMPLOYEE -> addEmployee(new_person, false);
+    switch (engine_type) {
+      case ADD_ENGINE -> addEngine(name, power);
+      case ADD_JET_ENGINE -> addJetEngine(name, power);
+      case ADD_DIEZ_ENGINE -> addConsEngine(name, power, true);
+      case ADD_CONS_ENGINE -> addConsEngine(name, power, false);
       default -> this.out.println("???");
     }
   }
 
   /**
-   * Метод добавления человека
+   * Метод добавления двигателя
    *
-   * @param person добавляемый человек
+   * @param name имя добавляемого двигателя
+   * @param power мощность добавляемого двигателя
    */
-  private void addPerson(Person person) {
-    this.persons.add(person);
+  private void addEngine(String name, int power) {
+    this.engine.add(new Engine(power, name));
   }
 
   /**
-   * Метод добавления студента
+   * Метод добавления реактивного двигателя
    *
-   * @param person исходный человек с заполненными полями
+   * @param name имя исходного двигателя
+   * @param power мощность добавляемого двигателя
    */
-  private void addStudent(Person person) {
-    if (person.getYearsOld() == -1) {
-      this.persons.add(new Student());
+  private void addJetEngine(String name, int power) {
+    if (power == -1 && name == null) {
+      this.engine.add(new JetEngine());
       return;
     }
-
-    Student newStudent = new Student(person);
-
-    boolean isCourse = false, isFaculty = false;
-
-    while (!(isCourse & isFaculty)) {
-      if (!isFaculty) {
-        this.out.println("Введите факультет студента");
-        isFaculty = newStudent.setFaculty(this.inp.getString());
-        if (!isFaculty) {
-          this.out.println("Некорректный ввод");
-        }
-      }
-
-      if (!isCourse) {
-        this.out.println("Введите курс студента (1-5)");
-        isCourse = newStudent.setCourse(this.inp.getInt());
-        if (!isCourse) {
-          this.out.println("Некорректный ввод");
-        }
-      }
-    }
-
-    this.persons.add(newStudent);
+    int thrust;
+    String type;
+    this.out.println("Введите тип двигателя");
+    type = this.inp.getString();
+    this.out.println("Введите тягу двигателя (1-100)");
+    thrust = this.inp.getInt();
+    this.engine.add(new JetEngine(power, name, thrust, type));
   }
 
   /**
-   * Метод добавления преподавателя
+   * Метод добавления двс
    *
-   * @param employee исходный сотрудник с заполненными полями
+   * @param name имя исходного двигателя
+   * @param power мощность добавляемого двигателя
+   * @param is_diez создается дизельный двигатель?
    */
-  private void addTeacher(Employee employee) {
-    if (employee.getYearsOld() == -1) {
-      this.persons.add(new Teacher());
-      return;
-    }
-
-    Teacher newTeacher = new Teacher(employee);
-
-    boolean isGroupCount = false, isDepartment = false;
-
-    while (!(isGroupCount & isDepartment)) {
-      if (!isDepartment) {
-        this.out.println("Введите кафедру преподавателя");
-        isDepartment = newTeacher.setDepartment(this.inp.getString());
-        if (!isDepartment) {
-          this.out.println("Некорректный ввод");
-        }
-      }
-
-      if (!isGroupCount) {
-        this.out.println("Введите кол-во групп которые ведет преподаватель");
-        isGroupCount = newTeacher.setGroupCount(this.inp.getInt());
-        if (!isGroupCount) {
-          this.out.println("Некорректный ввод");
-        }
-      }
-    }
-
-    this.persons.add(newTeacher);
-  }
-
-  /**
-   * Метод добавления сотрудника
-   *
-   * @param person исходный человек с заполненными полями
-   */
-  private void addEmployee(Person person, boolean is_teacher) {
-    if (person.getYearsOld() == -1) {
-      if (is_teacher) {
-        addTeacher(new Employee());
+  private void addConsEngine(String name, int power, boolean is_diez) {
+    if (power == -1 && name == null) {
+      if (is_diez) {
+        addDiezEng(null, -1, null, -1);
       } else {
-        this.persons.add(new Employee());
+        this.engine.add(new ConsEngine());
       }
       return;
     }
 
-    String jobTitle;
-    int lengthOfWork;
+    String system;
+    int numbCylinder;
 
-
-    if (is_teacher) {
-      jobTitle = "Преподаватель";
+    if (is_diez) {
+      system = "Дизельная";
     } else {
-      this.out.println("Введите должность сотрудника");
-      jobTitle = this.inp.getString();
+      this.out.println("Введите систему двигателя");
+      system = this.inp.getString();
     }
-    this.out.println("Введите стаж сотрудника");
-    lengthOfWork = this.inp.getInt();
-
-
-    Employee newEmp = new Employee(person.getYearsOld(), person.getName(), lengthOfWork, jobTitle);
-    if (is_teacher) {
-      addTeacher(newEmp);
+    this.out.println("Введите количество цилиндров (1 - 64)");
+    numbCylinder = this.inp.getInt();
+    if (is_diez) {
+      addDiezEng(name, power, system, numbCylinder);
     } else {
-      this.persons.add(newEmp);
+      this.engine.add(new ConsEngine(power, name, numbCylinder, system));
     }
 
   }
 
   /**
-   * Метод удаления человека из списка
+   * Метод добавления дизельного двигателя
+   *
+   * @param name имя исходного двигателя
+   * @param power мощность добавляемого двигателя
+   * @param system система двигателя
+   * @param numbCylinder кол-во цилиндров двигателя
    */
-  private void deletePerson() {
-    out.println("Введите индекс человека в списке:");
+  private void addDiezEng(String name, int power, String system, int numbCylinder) {
+    if (name == null && power == -1 && system == null && numbCylinder == -1) {
+      this.engine.add(new DiezEngine());
+      return;
+    }
+
+    String instPL;
+    int numbCycle;
+    this.out.println("Введите систему дизельного двигателя");
+    instPL = this.inp.getString();
+    this.out.println("Введите количество тактов дизельного двигателя (1 - 64)");
+    numbCycle = this.inp.getInt();
+    this.engine.add(new DiezEngine(power, name, numbCylinder, system, numbCycle, instPL));
+  }
+
+  /**
+   * Метод удаления двигателя из списка
+   */
+  private void deleteEngines() {
+    out.println("Введите индекс двигателя в списке:");
     int index = inp.getInt();
-    if (index < 1 || index > persons.size()) {
+    if (index < 1 || index > engine.size()) {
       out.println("Некорректный индекс");
     } else {
-      this.out.println(persons.get(index - 1).getName() + " удален из списка");
-      persons.remove(index - 1);
+      this.out.println(engine.get(index - 1).getName() + " удален из списка");
+      engine.remove(index - 1);
     }
   }
 
   /**
-   * Метод вывода всех людей в списке
+   * Метод вывода всех двигателей в списке
    */
-  private void printPersons() {
-    if (persons.isEmpty()) {
-      out.println("Ни одного человека не добавлено");
+  private void printEngines() {
+    if (engine.isEmpty()) {
+      out.println("Ни одного двигателя не добавлено");
       return;
     }
 
     int num = 1;
-    for (Person person : persons) {
+    for (Engine engine : engine) {
       out.printf("№%d\n", num++);
-      out.println(person);
+      out.println(engine);
       out.println("************************");
     }
   }
 
   /**
-   * Метод сравнения двух человек из списка
+   * Метод сравнения двух двигателей из списка
    */
-  private void comparator() {
+  private void compareEngine() {
     int index1 = 1, index2 = 1;
     boolean isIndex1 = false, isIndex2 = false;
 
     while (!(isIndex1 & isIndex2)) {
       if (!isIndex1) {
-        this.out.println("Введите индекс первого человека");
+        this.out.println("Введите индекс первого двигателя");
         index1 = inp.getInt();
-        if (index1 > 1 || index1 < persons.size()) {
+        if (index1 > 1 || index1 < engine.size()) {
           isIndex1 = true;
         } else {
           out.println("Некорректный индекс");
@@ -340,19 +298,20 @@ class UI implements menuEnum {
       }
 
       if (!isIndex2) {
-        this.out.println("Введите индекс второго человека");
+        this.out.println("Введите индекс второго двигателя");
         index2 = inp.getInt();
-        if (index2 > 1 || index2 < persons.size()) {
+        if (index2 > 1 || index2 < engine.size()) {
           isIndex2 = true;
         } else {
           out.println("Некорректный индекс");
         }
       }
     }
-    if (persons.get(index1 - 1).equals(persons.get(index2 - 1))) {
-      out.printf("Люди под номером %d и %d индентичны друг другу\n", index1, index2);
+    if (engine.get(index1 - 1).equals(engine.get(index2 - 1))) {
+      out.printf("Двигатели под номером %d и %d индентичны друг другу\n", index1, index2);
     } else {
-      out.printf("Люди под номером %d и %d отличаются друг от друга\n", index1,
+      out.printf("Двигатели под номером %d и %d отличаются друг от друга\n", index1,
           index2);
     }
   }
+}
